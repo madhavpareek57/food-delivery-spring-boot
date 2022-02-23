@@ -73,4 +73,15 @@ public class Orders {
     public void setPayment_status(Integer payment_status) {
         Payment_status = payment_status;
     }
+
+    @Override
+    public String toString() {
+        return "Orders{" +
+                "id=" + id +
+                ", cart_id=" + cart_id +
+                ", order_status=" + order_status +
+                ", Payment_status=" + Payment_status +
+                ", Total_cost=" + Total_cost +
+                '}';
+    }
 }

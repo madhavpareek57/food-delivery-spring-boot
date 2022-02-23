@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 @SpringBootApplication
-@EnableSwagger2
+//@EnableSwagger2
 public class FoodDeliveryApplication {
 
 	public static void main(String[] args) {

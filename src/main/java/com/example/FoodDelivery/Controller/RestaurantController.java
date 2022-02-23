@@ -13,10 +13,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
-import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +25,7 @@ public class RestaurantController {
 
     Logger logger = LogManager.getLogger(RestaurantController.class);
 
+    private final KafkaTemplate<String, String> kafkaTemplate;
     private final RestRepositories restRepositories;
     private final MenuItemRepository menuItemRepository;
 
@@ -35,7 +34,8 @@ public class RestaurantController {
 
 
     @Autowired
-    public RestaurantController(menuRepository mr, RestRepositories restRepositories, MenuItemRepository menuItemRepository) {
+    public RestaurantController(KafkaTemplate<String, String> kafkaTemplate, menuRepository mr, RestRepositories restRepositories, MenuItemRepository menuItemRepository) {
+        this.kafkaTemplate = kafkaTemplate;
         this.restRepositories = restRepositories;
         this.mr = mr;
         this.menuItemRepository = menuItemRepository;
@@ -70,6 +70,7 @@ public class RestaurantController {
             req_list.add(rest);
 
         }
+        kafkaTemplate.send("kafka_topic", ""+req_list);
 
         return req_list;
 

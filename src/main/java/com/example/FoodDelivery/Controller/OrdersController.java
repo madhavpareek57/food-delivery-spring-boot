@@ -6,19 +6,20 @@ import com.example.FoodDelivery.Repositories.OrdersRepository;
 import com.example.FoodDelivery.global;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("order")
 public class OrdersController {
     private final OrdersRepository ordersRepository;
     Logger logger = LogManager.getLogger(OrdersController.class);
+    private final KafkaTemplate<String,String> kafkaTemplate;
 
-    public OrdersController(OrdersRepository ordersRepository) {
+    public OrdersController(OrdersRepository ordersRepository, KafkaTemplate<String, String> kafkaTemplate) {
         this.ordersRepository = ordersRepository;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @PostMapping("/place_order")
@@ -31,6 +32,9 @@ public class OrdersController {
         orders.setOrder_status(1);
         orders.setPayment_status(1);
         ordersRepository.save(orders);
+        String ord = orders.toString();
+        kafkaTemplate.send("kafka_topic",ord);
+
         return ordersRepository.findAll();
 
     }
